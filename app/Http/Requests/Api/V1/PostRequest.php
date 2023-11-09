@@ -12,9 +12,10 @@ class PostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->method() === 'POST'
-            ? true
-            : $this->post->user_id == Auth::id();
+        if (in_array($this->method(), ['PUT', 'DELETE']))
+            return $this->post->user_id == Auth::id();
+
+        return true;
     }
 
     /**
@@ -24,6 +25,9 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->method() === 'DELETE')
+            return [];
+
         return [
             'title' => ['required', 'max:255'],
             'content' => ['required'],

@@ -14,7 +14,7 @@ class PostFilter extends Filter
         $this->builder->where('content', 'like', '%' . $value . '%');
     }
 
-    public function userId(string $value): void
+    public function userId(int $value): void
     {
         $this->builder->where('user_id', $value);
     }

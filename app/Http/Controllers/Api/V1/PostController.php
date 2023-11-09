@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\PostRequest;
 use App\Http\Resources\Api\V1\PostShowResource;
+use App\Http\Resources\Api\V1\PostsResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class PostController extends JwtController
      */
     public function index(Request $request)
     {
-        return \App\Http\Resources\Api\V1\PostsResource::collection(
+        return PostsResource::collection(
             Post::filter($request->except('user', 'page'))
                 ->withWhereHas('user', fn($q) => $q->filter($request->input('user', [])))
                 ->paginate($request->input('paginate', 20))
@@ -75,10 +76,11 @@ class PostController extends JwtController
     /**
      * Delete a specific post.
      *
+     * @param \App\Http\Requests\Api\V1\PostRequest $request
      * @param \App\Models\Post $post
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Post $post)
+    public function destroy(PostRequest $request, Post $post)
     {
         $post->delete();
 
