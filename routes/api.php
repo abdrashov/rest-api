@@ -21,8 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', [LoginController::class, 'store']);
-Route::post('register', [RegisterController::class, 'store']);
+Route::prefix('v1')->group(function () {
+    Route::post('login', [LoginController::class, 'store']);
+    Route::post('register', [RegisterController::class, 'store']);
 
-Route::apiResource('posts', PostController::class)
-    ->only('index', 'show', 'store', 'update', 'destroy');
+    Route::apiResource('posts', PostController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy');
+});

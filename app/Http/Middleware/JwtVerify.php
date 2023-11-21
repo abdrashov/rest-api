@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\UnauthorizedException;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,22 +28,16 @@ class JwtVerify extends BaseMiddleware
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 // If the token is invalid, throw a validation exception with an error message.
-                return throw ValidationException::withMessages([
-                    'message' => __('jwt.invalid')
-                ]);
+                return throw UnauthorizedException::tokenIsInvalid();
             }
 
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
                 // If the token is expired, throw a validation exception with an error message.
-                return throw ValidationException::withMessages([
-                    'message' => __('jwt.expired')
-                ]);
+                return throw UnauthorizedException::tokenIsExpired();
             }
 
             // If the token is not found or has other issues, throw a validation exception.
-            return throw ValidationException::withMessages([
-                'message' => __('jwt.not_found')
-            ]);
+            return throw UnauthorizedException::notLoggedIn();
         }
 
         // If the token is valid, continue with the request.
